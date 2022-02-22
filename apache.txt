@@ -1,0 +1,70 @@
+# yum -y install httpd
+# systemctl start httpd
+# systemctl enable httpd
+# firewall-cmd --permanent --add-service=http
+# firewall-cmd --permanent --add-service=https
+# firewall-cmd --reload
+# mkdir -p /var/www/quazi.info/html 
+# mkdir -p /var/www/quazi.info/log
+# chown -R $USER. /var/www/quazi.info/html
+# chmod -R 755 /var/www
+
+# vim /var/www/quazi.info/html/index.html
+
+<html>
+  <head>
+    <title>Welcome to Quazi.info!</title>
+  </head>
+  <body>
+    <h1>Success! The quazi.info virtual host is working!</h1>
+  </body>
+</html>
+:wq
+
+
+
+# mkdir /etc/httpd/sites-available /etc/httpd/sites-enabled
+# vim /etc/httpd/conf/httpd.conf
+   Add this to the end
+IncludeOptional sites-enabled/*.conf
+:wq
+
+# vim /etc/httpd/sites-available/quazi.info.conf
+
+Add in the following configuration block.
+/etc/httpd/sites-available/quazi.info.conf
+
+<VirtualHost *:80>
+    ServerName www.quazi.info
+    ServerAlias quazi.info
+    DocumentRoot /var/www/quazi.info/html
+    ErrorLog /var/www/quazi.info/log/error.log
+    CustomLog /var/www/quazi.info/log/requests.log combined
+</VirtualHost>
+
+# ln -s /etc/httpd/sites-available/quazi.info.conf /etc/httpd/sites-enabled/quazi.info.conf
+
+
+
+
+# setsebool -P httpd_unified 1
+
+$ sudo ls -dZ /var/www/quazi.info/log/
+
+$ sudo semanage fcontext -a -t httpd_log_t "/var/www/quazi.info/log(/.*)?"
+
+$ sudo restorecon -R -v /var/www/quazi.info/log
+
+$ sudo ls -dZ /var/www/quazi.info/log/
+
+$ sudo systemctl restart httpd
+
+
+
+
+
+
+ 
+
+
+
